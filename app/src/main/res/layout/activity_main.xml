@@ -8,8 +8,15 @@
         android:id="@+id/et_phone_num"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:hint="请输入手机号码"
+        android:hint="在此输入号码"
         android:inputType="phone"/>
+
+    <Button
+        android:id="@+id/button"
+        android:onClick="onAddNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="添加"/>
 
     <Button
         android:id="@+id/btn_call_phone"

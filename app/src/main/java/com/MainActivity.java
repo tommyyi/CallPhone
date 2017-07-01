@@ -18,11 +18,16 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity
 {
     private EditText etPhone;
     private PhoneCallStateListener mPhoneCallStateListener;
+    private List<String> mPhoneList=new ArrayList<>();
+    private int mIndex=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -40,16 +45,29 @@ public class MainActivity extends AppCompatActivity
 
     public void onCall(View view)
     {
-        String number = etPhone.getText().toString();
-        if (number.equals(""))
-        {
-            Toast.makeText(MainActivity.this, "号码不能为空", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        call(number);
+        String nextNum = getNextNum();
+        if(nextNum!=null)
+            dial(nextNum);
     }
 
-    private void call(String number)
+    private String getNextNum()
+    {
+        if(mPhoneList.size()==0)
+        {
+            Toast.makeText(MainActivity.this, "您还没有添加号码", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        String number = mPhoneList.get(mIndex);
+        mIndex++;
+        if(mIndex==mPhoneList.size())
+        {
+            //从头开始
+            mIndex=0;
+        }
+        return number;
+    }
+
+    private void dial(String number)
     {
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
@@ -74,5 +92,17 @@ public class MainActivity extends AppCompatActivity
 
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    public void onAddNumber(View view)
+    {
+        String number = etPhone.getText().toString();
+        if (number.equals(""))
+        {
+            Toast.makeText(MainActivity.this, "号码不能为空", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mPhoneList.add(number);
+        Toast.makeText(MainActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
     }
 }
