@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.net.NetHelper;
+import com.net.PhoneBean;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -26,8 +29,8 @@ public class MainActivity extends AppCompatActivity
 {
     private EditText etPhone;
     private PhoneCallStateListener mPhoneCallStateListener;
-    private List<String> mPhoneList=new ArrayList<>();
     private int mIndex=0;
+    private List<PhoneBean> mPhoneBeanList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +44,17 @@ public class MainActivity extends AppCompatActivity
 
         etPhone = (EditText) findViewById(R.id.et_phone_num);
         EventBus.getDefault().register(this);
+
+        Runnable runnable = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                List<PhoneBean> phoneBeanList = NetHelper.refresh(getApplicationContext(), "phoneList.json");
+                EventBus.getDefault().post(phoneBeanList);
+            }
+        };
+        new Thread(runnable).start();
     }
 
     public void onCall(View view)
@@ -52,14 +66,14 @@ public class MainActivity extends AppCompatActivity
 
     private String getNextNum()
     {
-        if(mPhoneList.size()==0)
+        if(mPhoneBeanList.size()==0)
         {
             Toast.makeText(MainActivity.this, "您还没有添加号码", Toast.LENGTH_SHORT).show();
             return null;
         }
-        String number = mPhoneList.get(mIndex);
+        String number = mPhoneBeanList.get(mIndex).getNumber();
         mIndex++;
-        if(mIndex==mPhoneList.size())
+        if(mIndex==mPhoneBeanList.size())
         {
             //从头开始
             mIndex=0;
@@ -84,6 +98,16 @@ public class MainActivity extends AppCompatActivity
         onCall(null);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefresh(List<PhoneBean> phoneBeanList)
+    {
+        if (phoneBeanList!=null&&phoneBeanList.size()!=0)
+        {
+            mPhoneBeanList = phoneBeanList;
+        }
+        Toast.makeText(MainActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onDestroy()
     {
@@ -102,7 +126,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, "号码不能为空", Toast.LENGTH_SHORT).show();
             return;
         }
-        mPhoneList.add(number);
+        mPhoneBeanList.add(new PhoneBean(number));
         Toast.makeText(MainActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
     }
 }
