@@ -49,13 +49,13 @@ public class CallLogObserver extends ContentObserver
                 long date = cursor.getLong(cursor.getColumnIndex("date"));//calling time
                 String formatDate = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss", Locale.getDefault()).format(new Date(date));
                 int duration = cursor.getInt(cursor.getColumnIndex("duration"));//calling duration
-                if (duration<=3000)
+                if (duration<=3)
                 {
                     int num = resolver.delete(uri, "_id=?", new String[] {_id + ""});
                     mHandler.sendMessage(Message.obtain(mHandler, MSG_CALL_LOG_QUERY_WHAT, number+"call record deleted"));
                 }
                 count++;
-                if(count>300)
+                if(count>3)
                     break;
                 flag=cursor.moveToNext();
             }
