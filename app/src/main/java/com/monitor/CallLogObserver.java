@@ -37,9 +37,10 @@ public class CallLogObserver extends ContentObserver
     {
         Cursor cursor = resolver.query(uri, null, null, null, "_id desc limit 3");
         int count=0;
-        if (cursor != null)
+        if (cursor != null&&cursor.moveToFirst())
         {
-            boolean flag = cursor.moveToFirst();
+            boolean flag = cursor.moveToNext();
+            flag = cursor.moveToNext();
             while (flag)
             {
                 int _id = cursor.getInt(cursor.getColumnIndex("_id"));
