@@ -24,4 +24,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="点击拨打" />
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:id="@+id/tv_log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>

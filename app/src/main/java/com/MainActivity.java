@@ -12,8 +12,10 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.monitor.CallLogHandler;
 import com.net.NetHelper;
 import com.net.PhoneBean;
 
@@ -31,12 +33,16 @@ public class MainActivity extends AppCompatActivity
     private PhoneCallStateListener mPhoneCallStateListener;
     private int mIndex=0;
     private List<PhoneBean> mPhoneBeanList=new ArrayList<>();
+    private CallLogHandler mCallLogHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mCallLogHandler = new CallLogHandler();
+        mCallLogHandler.register(getApplicationContext());
 
         TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         mPhoneCallStateListener = new PhoneCallStateListener();
@@ -108,9 +114,18 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(MainActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDeleted(LogDeleted logDeleted)
+    {
+        TextView view = (TextView)findViewById(R.id.tv_log);
+        CharSequence text = view.getText();
+        view.setText(text+"\r\n"+logDeleted.getMsgBody());
+    }
+
     @Override
     protected void onDestroy()
     {
+        mCallLogHandler.unRegister(getApplicationContext());
         TelephonyManager tm = (TelephonyManager) getSystemService(Service.TELEPHONY_SERVICE);
         tm.listen(mPhoneCallStateListener, PhoneStateListener.LISTEN_NONE);
 
