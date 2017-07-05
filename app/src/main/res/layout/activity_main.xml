@@ -6,6 +6,7 @@
 
     <EditText
         android:id="@+id/et_phone_num"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:hint="在此输入号码"
@@ -13,6 +14,7 @@
 
     <Button
         android:id="@+id/button"
+        android:visibility="gone"
         android:onClick="onAddNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,9 +25,10 @@
         android:onClick="onCall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="点击拨打" />
+        android:text="加载中......" />
 
     <TextView
+        android:visibility="gone"
         android:layout_marginTop="10dp"
         android:id="@+id/tv_log"
         android:layout_width="match_parent"

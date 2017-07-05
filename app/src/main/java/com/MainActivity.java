@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     private int mIndex=0;
     private List<PhoneBean> mPhoneBeanList=new ArrayList<>();
     private CallLogHandler mCallLogHandler;
+    private Button mButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity
         mPhoneCallStateListener = new PhoneCallStateListener();
         tm.listen(mPhoneCallStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
+        mButton = (Button)findViewById(R.id.btn_call_phone);
+        mButton.setEnabled(false);
         etPhone = (EditText) findViewById(R.id.et_phone_num);
         EventBus.getDefault().register(this);
 
@@ -131,6 +135,8 @@ public class MainActivity extends AppCompatActivity
         if (phoneBeanList!=null&&phoneBeanList.size()!=0)
         {
             mPhoneBeanList = phoneBeanList;
+            mButton.setText("点击拨打");
+            mButton.setEnabled(true);
             Toast.makeText(MainActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
         }
         else
