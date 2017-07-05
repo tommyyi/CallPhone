@@ -29,6 +29,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
 {
+    private static final String LATEST = "latest";
     private EditText etPhone;
     private PhoneCallStateListener mPhoneCallStateListener;
     private int mIndex=0;
@@ -57,6 +58,25 @@ public class MainActivity extends AppCompatActivity
             public void run()
             {
                 List<PhoneBean> phoneBeanList = NetHelper.refresh(getApplicationContext(), "phoneList.json");
+                if(phoneBeanList!=null&&phoneBeanList.size()!=0)
+                {
+                    String latest = PreferenceUtil.getString(getApplicationContext(), LATEST);
+                    for(int index=0;index<phoneBeanList.size();index++)
+                    {
+                        if(phoneBeanList.get(index).getNumber().equals(latest))
+                        {
+                            if (index==phoneBeanList.size()-1)
+                            {
+                                mIndex=0;
+                            }
+                            else
+                            {
+                                mIndex=index+1;
+                            }
+                            break;
+                        }
+                    }
+                }
                 EventBus.getDefault().post(phoneBeanList);
             }
         };
@@ -96,6 +116,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         startActivity(intent);
+        PreferenceUtil.putString(getApplicationContext(), LATEST,number);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -110,8 +131,10 @@ public class MainActivity extends AppCompatActivity
         if (phoneBeanList!=null&&phoneBeanList.size()!=0)
         {
             mPhoneBeanList = phoneBeanList;
+            Toast.makeText(MainActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(MainActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(MainActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
