@@ -113,14 +113,14 @@ public class MainActivity extends AppCompatActivity
 
     private void dial(String number)
     {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number.replace(" ","")));
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
         {
             Toast.makeText(MainActivity.this, "没有授予拨打电话权限", Toast.LENGTH_SHORT).show();
             return;
         }
         startActivity(intent);
-        PreferenceUtil.putString(getApplicationContext(), LATEST,number);
+        PreferenceUtil.putString(getApplicationContext(), LATEST,number.replace(" ",""));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
