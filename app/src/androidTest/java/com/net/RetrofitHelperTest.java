@@ -2,6 +2,8 @@ package com.net;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.MainActivity;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +23,16 @@ public class RetrofitHelperTest extends TestBase
     }
 
     @Test
-    public void pullLIST() throws Exception
+    public void pullList() throws Exception
     {
-        List<PhoneBean> phoneBeanList = NetHelper.refresh(mContext, "phoneList.json");
+        List<PhoneBean> phoneBeanList = NetHelper.refresh(mContext, "https://raw.githubusercontent.com/tommyyi/CallPhone/master/phoneDir/phoneList.json");
+        waiting();
+    }
+
+    @Test
+    public void pullUrlList() throws Exception
+    {
+        List<TargetBean> urlList = NetHelper.getUrlList(mContext, MainActivity.TARGET_JSON);
+        waiting();
     }
 }

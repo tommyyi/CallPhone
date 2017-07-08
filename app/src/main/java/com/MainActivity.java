@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.monitor.CallLogHandler;
 import com.net.NetHelper;
 import com.net.PhoneBean;
+import com.net.TargetBean;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,6 +32,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
 {
     private static final String LATEST = "latest";
+    public static final String TARGET_JSON = "target.json";
     private EditText etPhone;
     private PhoneCallStateListener mPhoneCallStateListener;
     private int mIndex=0;
@@ -61,7 +63,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                List<PhoneBean> phoneBeanList = NetHelper.refresh(getApplicationContext(), "phoneList.json");
+                List<TargetBean> urlList = NetHelper.getUrlList(getApplicationContext(), TARGET_JSON);
+                if(urlList==null||urlList.size()==0)
+                {
+                    EventBus.getDefault().post(null);
+                    return;
+                }
+
+                String url = urlList.get(Index.index).getUrl();
+                List<PhoneBean> phoneBeanList = NetHelper.refresh(getApplicationContext(), url);
                 if(phoneBeanList!=null&&phoneBeanList.size()!=0)
                 {
                     String latest = PreferenceUtil.getString(getApplicationContext(), LATEST);

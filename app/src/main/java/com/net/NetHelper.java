@@ -14,16 +14,35 @@ import retrofit2.Response;
 
 public class NetHelper
 {
-    public static List<PhoneBean> refresh(Context context, final String fileName)
+    public static List<PhoneBean> refresh(Context context, final String url)
     {
         try
         {
             RetrofitHelper.INetworkPort iNetworkPort = RetrofitHelper.init(context);
-            Call<ResponseBody> call = iNetworkPort.getList("https://raw.githubusercontent.com/tommyyi/CallPhone/master/phoneDir/" + fileName);
+            Call<ResponseBody> call = iNetworkPort.getList(url);
             Response<ResponseBody> response = call.execute();
             String json = response.body().string();
 
             List<PhoneBean> listBeen = PhoneBean.arrayListBeanFromData(json);
+            return listBeen;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static List<TargetBean> getUrlList(Context context, final String fileName)
+    {
+        try
+        {
+            RetrofitHelper.INetworkPort iNetworkPort = RetrofitHelper.init(context);
+            Call<ResponseBody> call = iNetworkPort.getList("https://raw.githubusercontent.com/tommyyi/CallPhone/master/guide/" + fileName);
+            Response<ResponseBody> response = call.execute();
+            String json = response.body().string();
+
+            List<TargetBean> listBeen = TargetBean.arrayTargetBeanFromData(json);
             return listBeen;
         }
         catch (Exception e)

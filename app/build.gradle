@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 
 android {
@@ -11,12 +13,63 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    productFlavors{
+        x0{}
+        x1{}
+        x2{}
+        x3{}
+        x4{}
+        x5{}
+        x6{}
+        x7{}
+        x8{}
+        x9{}
+        x10{}
+        x11{}
+        x12{}
+        x13{}
+        x14{}
+        x15{}
+        x16{}
+        x17{}
+        x18{}
+        x19{}
+        x20{}
+        x21{}
+        x22{}
+        x23{}
+        x24{}
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    applicationVariants.all({ variant ->
+        variant.outputs.each({ output ->
+            def outputFile = output.outputFile
+            if (!variant.getBuildType().isDebuggable() && outputFile != null && outputFile.name.endsWith('.apk'))
+            {
+//                def newSuffix = "-" + getTime() + "-v${variant.productFlavors[0].versionName}.apk"
+                def newSuffix = "-" + getTime() + ".apk"
+                println "文件名：" + outputFile.name
+                def flavorName = variant.productFlavors[0].name
+                def oldPrefix = "app-" + flavorName + "-release"
+                def newPrefix = "小乐乐" + flavorName
+                output.outputFile = new File(outputFile.parent, outputFile.name.replace(oldPrefix, newPrefix).replace("app-", "").replace(".apk", newSuffix))
+            }
+        })
+    })
+}
+
+String getTime()
+{
+    String time = new SimpleDateFormat("MMddHH").format(new Date(System.currentTimeMillis()))
+    return time;
 }
 
 dependencies {
