@@ -7,7 +7,7 @@ android {
     buildToolsVersion "25.0.0"
 
     defaultConfig {
-        applicationId "com.callit"
+        applicationId "com.xiaolele"
         minSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -15,31 +15,81 @@ android {
     }
 
     productFlavors{
-        x0{}
-        x1{}
-        x2{}
-        x3{}
-        x4{}
-        x5{}
-        x6{}
-        x7{}
-        x8{}
-        x9{}
-        x10{}
-        x11{}
-        x12{}
-        x13{}
-        x14{}
-        x15{}
-        x16{}
-        x17{}
-        x18{}
-        x19{}
-        x20{}
-        x21{}
-        x22{}
-        x23{}
-        x24{}
+        x0{
+            manifestPlaceholders = [appname        : "小乐乐0"]
+        }
+        x1{
+            manifestPlaceholders = [appname        : "小乐乐1"]
+        }
+        x2{
+            manifestPlaceholders = [appname        : "小乐乐2"]
+        }
+        x3{
+            manifestPlaceholders = [appname        : "小乐乐3"]
+        }
+        x4{
+            manifestPlaceholders = [appname        : "小乐乐4"]
+        }
+        x5{
+            manifestPlaceholders = [appname        : "小乐乐5"]
+        }
+        x6{
+            manifestPlaceholders = [appname        : "小乐乐6"]
+        }
+        x7{
+            manifestPlaceholders = [appname        : "小乐乐7"]
+        }
+        x8{
+            manifestPlaceholders = [appname        : "小乐乐8"]
+        }
+        x9{
+            manifestPlaceholders = [appname        : "小乐乐9"]
+        }
+        x10{
+            manifestPlaceholders = [appname        : "小乐乐10"]
+        }
+        x11{
+            manifestPlaceholders = [appname        : "小乐乐11"]
+        }
+        x12{
+            manifestPlaceholders = [appname        : "小乐乐12"]
+        }
+        x13{
+            manifestPlaceholders = [appname        : "小乐乐13"]
+        }
+        x14{
+            manifestPlaceholders = [appname        : "小乐乐14"]
+        }
+        x15{
+            manifestPlaceholders = [appname        : "小乐乐15"]
+        }
+        x16{
+            manifestPlaceholders = [appname        : "小乐乐16"]
+        }
+        x17{
+            manifestPlaceholders = [appname        : "小乐乐17"]
+        }
+        x18{
+            manifestPlaceholders = [appname        : "小乐乐18"]
+        }
+        x19{
+            manifestPlaceholders = [appname        : "小乐乐19"]
+        }
+        x20{
+            manifestPlaceholders = [appname        : "小乐乐20"]
+        }
+        x21{
+            manifestPlaceholders = [appname        : "小乐乐21"]
+        }
+        x22{
+            manifestPlaceholders = [appname        : "小乐乐22"]
+        }
+        x23{
+            manifestPlaceholders = [appname        : "小乐乐23"]
+        }
+        x24{
+            manifestPlaceholders = [appname        : "小乐乐24"]
+        }
     }
 
     buildTypes {
