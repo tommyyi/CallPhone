@@ -17,78 +17,103 @@ android {
     productFlavors{
         x0{
             manifestPlaceholders = [appname        : "小乐乐0"]
+            applicationId "com.xiaolele0"
         }
         x1{
             manifestPlaceholders = [appname        : "小乐乐1"]
+            applicationId "com.xiaolele1"
         }
         x2{
             manifestPlaceholders = [appname        : "小乐乐2"]
+            applicationId "com.xiaolele2"
         }
         x3{
             manifestPlaceholders = [appname        : "小乐乐3"]
+            applicationId "com.xiaolele3"
         }
         x4{
             manifestPlaceholders = [appname        : "小乐乐4"]
+            applicationId "com.xiaolele4"
         }
         x5{
             manifestPlaceholders = [appname        : "小乐乐5"]
+            applicationId "com.xiaolele5"
         }
         x6{
             manifestPlaceholders = [appname        : "小乐乐6"]
+            applicationId "com.xiaolele6"
         }
         x7{
             manifestPlaceholders = [appname        : "小乐乐7"]
+            applicationId "com.xiaolele7"
         }
         x8{
             manifestPlaceholders = [appname        : "小乐乐8"]
+            applicationId "com.xiaolele8"
         }
         x9{
             manifestPlaceholders = [appname        : "小乐乐9"]
+            applicationId "com.xiaolele9"
         }
         x10{
             manifestPlaceholders = [appname        : "小乐乐10"]
+            applicationId "com.xiaolele10"
         }
         x11{
             manifestPlaceholders = [appname        : "小乐乐11"]
+            applicationId "com.xiaolele11"
         }
         x12{
             manifestPlaceholders = [appname        : "小乐乐12"]
+            applicationId "com.xiaolele12"
         }
         x13{
             manifestPlaceholders = [appname        : "小乐乐13"]
+            applicationId "com.xiaolele13"
         }
         x14{
             manifestPlaceholders = [appname        : "小乐乐14"]
+            applicationId "com.xiaolele14"
         }
         x15{
             manifestPlaceholders = [appname        : "小乐乐15"]
+            applicationId "com.xiaolele15"
         }
         x16{
             manifestPlaceholders = [appname        : "小乐乐16"]
+            applicationId "com.xiaolele16"
         }
         x17{
             manifestPlaceholders = [appname        : "小乐乐17"]
+            applicationId "com.xiaolele17"
         }
         x18{
             manifestPlaceholders = [appname        : "小乐乐18"]
+            applicationId "com.xiaolele18"
         }
         x19{
             manifestPlaceholders = [appname        : "小乐乐19"]
+            applicationId "com.xiaolele19"
         }
         x20{
             manifestPlaceholders = [appname        : "小乐乐20"]
+            applicationId "com.xiaolele20"
         }
         x21{
             manifestPlaceholders = [appname        : "小乐乐21"]
+            applicationId "com.xiaolele21"
         }
         x22{
             manifestPlaceholders = [appname        : "小乐乐22"]
+            applicationId "com.xiaolele22"
         }
         x23{
             manifestPlaceholders = [appname        : "小乐乐23"]
+            applicationId "com.xiaolele23"
         }
         x24{
             manifestPlaceholders = [appname        : "小乐乐24"]
+            applicationId "com.xiaolele24"
         }
     }
 
