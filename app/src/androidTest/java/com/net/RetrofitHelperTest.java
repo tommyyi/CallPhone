@@ -2,7 +2,7 @@ package com.net;
 
 import android.support.test.runner.AndroidJUnit4;
 
-import com.MainActivity;
+import com.Index;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class RetrofitHelperTest extends TestBase
     @Test
     public void pullUrlList() throws Exception
     {
-        List<TargetBean> urlList = NetHelper.getUrlList(mContext, MainActivity.TARGET_JSON);
+        List<TargetBean> urlList = NetHelper.getUrlList(mContext, Index.TARGET_JSON);
         waiting();
     }
 }

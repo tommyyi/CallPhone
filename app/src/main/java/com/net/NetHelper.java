@@ -24,6 +24,19 @@ public class NetHelper
             String json = response.body().string();
 
             List<PhoneBean> listBeen = PhoneBean.arrayListBeanFromData(json);
+            if(listBeen!=null&&listBeen.size()!=0)
+            {
+                for (PhoneBean phoneBean:listBeen)
+                {
+                    String number = phoneBean.getNumber();
+                    if (number !=null)
+                    {
+                        /*去掉空格、换行*/
+                        phoneBean.setNumber(number.replace(" ", "").replace("\r\n","").replace("\r","").replace("\n",""));
+                    }
+                }
+            }
+
             return listBeen;
         }
         catch (Exception e)

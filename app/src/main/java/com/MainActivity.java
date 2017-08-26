@@ -5,6 +5,8 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,7 +34,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
 {
     private static final String LATEST = "latest";
-    public static final String TARGET_JSON = "target.json";
     private EditText etPhone;
     private PhoneCallStateListener mPhoneCallStateListener;
     private int mIndex=0;
@@ -63,16 +64,41 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run()
             {
-                List<TargetBean> urlList = NetHelper.getUrlList(getApplicationContext(), TARGET_JSON);
+                List<TargetBean> urlList = NetHelper.getUrlList(getApplicationContext(), Index.TARGET_JSON);
                 if(urlList==null||urlList.size()==0)
                 {
-                    EventBus.getDefault().post(null);
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            netFail();
+                        }
+                    });
                     return;
                 }
 
                 String url = urlList.get(Index.index).getUrl();
                 List<PhoneBean> phoneBeanList = NetHelper.refresh(getApplicationContext(), url);
-                if(phoneBeanList!=null&&phoneBeanList.size()!=0)
+
+                /*没有获取到号码*/
+                if(phoneBeanList==null||phoneBeanList.size()==0)
+                {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            netFail();
+                        }
+                    });
+                    return;
+                }
+
+                boolean needPost = true;
+                if(phoneBeanList.size() != 0)
                 {
                     String latest = PreferenceUtil.getString(getApplicationContext(), LATEST);
                     for(int index=0;index<phoneBeanList.size();index++)
@@ -81,7 +107,9 @@ public class MainActivity extends AppCompatActivity
                         {
                             if (index==phoneBeanList.size()-1)
                             {
-                                mIndex=0;
+                                // 最后一个拨打的号码是最后一个号码，已经打完了，不要循环拨打
+                                needPost = false;
+                                //mIndex=0;
                             }
                             else
                             {
@@ -91,10 +119,33 @@ public class MainActivity extends AppCompatActivity
                         }
                     }
                 }
-                EventBus.getDefault().post(phoneBeanList);
+
+                if (needPost)
+                {
+                    EventBus.getDefault().post(phoneBeanList);
+                }
+                else
+                {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            /*这个时候，将无法点击拨号按钮*/
+                            allCallsAreDone();
+                        }
+                    });
+                }
             }
         };
         new Thread(runnable).start();
+    }
+
+    private void allCallsAreDone()
+    {
+        mButton.setEnabled(false);
+        mButton.setText("需要更新表，更新后退出本软件并重新启动本软件");
     }
 
     public void onCall(View view)
@@ -108,16 +159,19 @@ public class MainActivity extends AppCompatActivity
     {
         if(mPhoneBeanList.size()==0)
         {
-            Toast.makeText(MainActivity.this, "您还没有添加号码", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "加载中", Toast.LENGTH_SHORT).show();
             return null;
         }
+
+        if(mIndex>=mPhoneBeanList.size())
+        {
+            /*号码已经拨打完毕，让用户无法继续点击拨打按钮*/
+            allCallsAreDone();
+            return null;
+        }
+
         String number = mPhoneBeanList.get(mIndex).getNumber();
         mIndex++;
-        if(mIndex==mPhoneBeanList.size())
-        {
-            //从头开始
-            mIndex=0;
-        }
         return number;
     }
 
@@ -147,10 +201,17 @@ public class MainActivity extends AppCompatActivity
             mPhoneBeanList = phoneBeanList;
             mButton.setText("点击拨打");
             mButton.setEnabled(true);
-            Toast.makeText(MainActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
         }
         else
-            Toast.makeText(MainActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
+        {
+            netFail();
+        }
+    }
+
+    private void netFail()
+    {
+        mButton.setText("加载失败，退出重试");
+        mButton.setEnabled(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
