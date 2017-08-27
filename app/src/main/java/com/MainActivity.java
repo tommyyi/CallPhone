@@ -150,12 +150,15 @@ public class MainActivity extends AppCompatActivity
 
     public void onCall(View view)
     {
-        String nextNum = getNextNum();
+        String nextNum = getNumber();
         if(nextNum!=null)
             dial(nextNum);
     }
 
-    private String getNextNum()
+    /**
+     * @return 从列表中获取要拨打的number
+     */
+    private String getNumber()
     {
         if(mPhoneBeanList.size()==0)
         {
@@ -171,6 +174,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         String number = mPhoneBeanList.get(mIndex).getNumber();
+        /*指向下一个要拨打的number*/
         mIndex++;
         return number;
     }
@@ -222,11 +226,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDeleted(LogDeleted logDeleted)
+    public void onDeleted(EventLogDeleted eventLogDeleted)
     {
         TextView view = (TextView)findViewById(R.id.tv_log);
         CharSequence text = view.getText();
-        view.setText(text+"\r\n"+logDeleted.getMsgBody());
+        view.setText(text+"\r\n"+ eventLogDeleted.getMsgBody());
     }
 
     @Override

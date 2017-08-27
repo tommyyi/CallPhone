@@ -7,7 +7,7 @@ import android.os.Message;
 import android.provider.CallLog;
 import android.util.Log;
 
-import com.LogDeleted;
+import com.EventLogDeleted;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -22,7 +22,7 @@ public class CallLogHandler
         public void handleMessage(Message msg)
         {
             String msgBody = (String)msg.obj;
-            EventBus.getDefault().post(new LogDeleted(msgBody));
+            EventBus.getDefault().post(new EventLogDeleted(msgBody));
             Log.i("Log", msg.obj + ":" + msgBody);
         }
     };

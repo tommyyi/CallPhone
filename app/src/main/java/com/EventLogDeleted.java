@@ -4,7 +4,7 @@ package com;
  * Created by 易剑锋 on 2017/7/4.
  */
 
-public class LogDeleted
+public class EventLogDeleted
 {
     public String getMsgBody()
     {
@@ -18,7 +18,7 @@ public class LogDeleted
 
     private String mMsgBody;
 
-    public LogDeleted(String msgBody)
+    public EventLogDeleted(String msgBody)
     {
         mMsgBody = msgBody;
     }
