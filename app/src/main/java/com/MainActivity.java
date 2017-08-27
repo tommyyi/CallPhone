@@ -187,12 +187,19 @@ public class MainActivity extends AppCompatActivity
         PreferenceUtil.putString(getApplicationContext(), LATEST,number.replace(" ",""));
     }
 
+    /**
+     * @param eventCallNext 指示可以呼叫下一个了
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onCallNext(EVENT_CALL_NEXT next)
+    public void onCallNext(EventCallNext eventCallNext)
     {
-        onCall(null);
+        View view = null;
+        onCall(view);
     }
 
+    /**
+     * @param phoneBeanList 从remote加载的列表
+     */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefresh(List<PhoneBean> phoneBeanList)
     {

@@ -18,7 +18,7 @@ public class PhoneCallStateListener extends PhoneStateListener
         {
             case TelephonyManager.CALL_STATE_IDLE:
                 Log.i(TAG, "CALL_STATE_IDLE");
-                EventBus.getDefault().post(new EVENT_CALL_NEXT());
+                EventBus.getDefault().post(new EventCallNext());
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
                 Log.i(TAG, "CALL_STATE_OFFHOOK");
