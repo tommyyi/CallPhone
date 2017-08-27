@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity
      * @param phoneBeanList 从remote加载的列表
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onRefresh(List<PhoneBean> phoneBeanList)
+    public void onLoad(List<PhoneBean> phoneBeanList)
     {
         if (phoneBeanList!=null&&phoneBeanList.size()!=0)
         {
