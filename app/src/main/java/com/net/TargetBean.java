@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * Created by 易剑锋 on 2017/7/9.
+ * 1个TargetBean存储1个url，这个url存储1个用户需要的编码列表
  */
 
 public class TargetBean
@@ -19,6 +20,10 @@ public class TargetBean
 
     private String url;
 
+    /**
+     * @param str json数组，每个元素是1个TargetBean的json
+     * @return
+     */
     public static List<TargetBean> arrayTargetBeanFromData(String str)
     {
         Type listType = new TypeToken<ArrayList<TargetBean>>()

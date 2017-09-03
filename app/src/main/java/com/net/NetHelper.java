@@ -46,6 +46,11 @@ public class NetHelper
         return null;
     }
 
+    /**
+     * @param context
+     * @param fileName company的配置文件，里面是一个json数组，每个user使用数组中指定位置的一个元素，这个元素是要一个url，通过这个url可以获取到该用户需要的编码列表
+     * @return url列表
+     */
     public static List<TargetBean> getUrlList(Context context, final String fileName)
     {
         try

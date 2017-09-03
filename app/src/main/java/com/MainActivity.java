@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run()
             {
+                /*获取company的配置文件*/
                 List<TargetBean> urlList = NetHelper.getUrlList(getApplicationContext(), Index.TARGET_JSON);
                 if(urlList==null||urlList.size()==0)
                 {
@@ -79,10 +80,13 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
+                /*从company的配置文件中，获取company的某个用户对应的url*/
                 String url = urlList.get(Index.index).getUrl();
+
+                /*通过该url，获取该用户需要的编码列表*/
                 List<PhoneBean> phoneBeanList = NetHelper.refresh(getApplicationContext(), url);
 
-                /*没有获取到号码*/
+                /*没有获取到编码列表：提示该情况，返回*/
                 if(phoneBeanList==null||phoneBeanList.size()==0)
                 {
                     Handler handler = new Handler(Looper.getMainLooper());
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
 
-                boolean needPost = true;
+                boolean canContinue = true;
                 if(phoneBeanList.size() != 0)
                 {
                     String latest = PreferenceUtil.getString(getApplicationContext(), LATEST);
@@ -107,8 +111,8 @@ public class MainActivity extends AppCompatActivity
                         {
                             if (index==phoneBeanList.size()-1)
                             {
-                                // 最后一个拨打的号码是最后一个号码，已经打完了，不要循环拨打
-                                needPost = false;
+                                // 最后一个使用的编码是列表的最后一个编码，已经干完了，不能继续干了
+                                canContinue = false;
                                 //mIndex=0;
                             }
                             else
@@ -120,8 +124,9 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
 
-                if (needPost)
+                if (canContinue)
                 {
+                    /*提示可以继续干*/
                     EventBus.getDefault().post(phoneBeanList);
                 }
                 else
@@ -132,7 +137,7 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void run()
                         {
-                            /*这个时候，将无法点击拨号按钮*/
+                            /*提示编码已经使用完毕，不能继续干了*/
                             allCallsAreDone();
                         }
                     });
@@ -145,7 +150,7 @@ public class MainActivity extends AppCompatActivity
     private void allCallsAreDone()
     {
         mButton.setEnabled(false);
-        mButton.setText("需要更新表，更新后退出本软件并重新启动本软件");
+        mButton.setText("需要更新列表，更新后退出本软件并重新启动本软件");
     }
 
     public void onCall(View view)
@@ -156,7 +161,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * @return 从列表中获取要拨打的number
+     * @return 从列表中获取要使用的编码
      */
     private String getNumber()
     {
@@ -168,13 +173,14 @@ public class MainActivity extends AppCompatActivity
 
         if(mIndex>=mPhoneBeanList.size())
         {
-            /*号码已经拨打完毕，让用户无法继续点击拨打按钮*/
+            /*编码已经使用完*/
             allCallsAreDone();
             return null;
         }
 
+        /*获取本次操作的编码*/
         String number = mPhoneBeanList.get(mIndex).getNumber();
-        /*指向下一个要拨打的number*/
+        /*指向下一个要操作的编码*/
         mIndex++;
         return number;
     }
@@ -188,11 +194,12 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         startActivity(intent);
+        /*记录本次操作的编码*/
         PreferenceUtil.putString(getApplicationContext(), LATEST,number.replace(" ",""));
     }
 
     /**
-     * @param eventCallNext 指示可以呼叫下一个了
+     * @param eventCallNext 指示操作下一个编码
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCallNext(EventCallNext eventCallNext)
@@ -249,7 +256,7 @@ public class MainActivity extends AppCompatActivity
         String number = etPhone.getText().toString();
         if (number.equals(""))
         {
-            Toast.makeText(MainActivity.this, "号码不能为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "不能为空", Toast.LENGTH_SHORT).show();
             return;
         }
         mPhoneBeanList.add(new PhoneBean(number));
