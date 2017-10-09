@@ -64,87 +64,91 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run()
             {
+                List<TargetBean> urlList;
+                List<PhoneBean> phoneBeanList;
+
                 /*获取company的配置文件*/
-                List<TargetBean> urlList = NetHelper.getUrlList(getApplicationContext(), Index.TARGET_JSON);
-                if(urlList==null||urlList.size()==0)
+                urlList = NetHelper.getUrlList(getApplicationContext(), Index.TARGET_JSON);
+                if(urlList ==null|| urlList.size()==0)
                 {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            netFail();
-                        }
-                    });
+                    loadPhoneBeanListFail();
                     return;
                 }
 
                 /*从company的配置文件中，获取company的某个用户对应的url*/
                 String url = urlList.get(Index.index).getUrl();
-
                 /*通过该url，获取该用户需要的编码列表*/
-                List<PhoneBean> phoneBeanList = NetHelper.refresh(getApplicationContext(), url);
+                phoneBeanList = NetHelper.refresh(getApplicationContext(), url);
 
                 /*没有获取到编码列表：提示该情况，返回*/
                 if(phoneBeanList==null||phoneBeanList.size()==0)
                 {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            netFail();
-                        }
-                    });
+                    loadPhoneBeanListFail();
                     return;
                 }
 
-                boolean canContinue = true;
-                if(phoneBeanList.size() != 0)
-                {
-                    String latest = PreferenceUtil.getString(getApplicationContext(), LATEST);
-                    for(int index=0;index<phoneBeanList.size();index++)
-                    {
-                        if(phoneBeanList.get(index).getNumber().equals(latest))
-                        {
-                            if (index==phoneBeanList.size()-1)
-                            {
-                                // 最后一个使用的编码是列表的最后一个编码，已经干完了，不能继续干了
-                                canContinue = false;
-                                //mIndex=0;
-                            }
-                            else
-                            {
-                                mIndex=index+1;
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                if (canContinue)
-                {
-                    /*提示可以继续干*/
-                    EventBus.getDefault().post(phoneBeanList);
-                }
-                else
-                {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable()
-                    {
-                        @Override
-                        public void run()
-                        {
-                            /*提示编码已经使用完毕，不能继续干了*/
-                            allCallsAreDone();
-                        }
-                    });
-                }
+                handlePhoneBeanList(phoneBeanList);
             }
         };
         new Thread(runnable).start();
+    }
+
+    private void loadPhoneBeanListFail()
+    {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                netFail();
+            }
+        });
+    }
+
+    private void handlePhoneBeanList(List<PhoneBean> phoneBeanList)
+    {
+        boolean canContinue = true;
+        if(phoneBeanList.size() != 0)
+        {
+            String latest = PreferenceUtil.getString(getApplicationContext(), LATEST);
+            for(int index=0;index<phoneBeanList.size();index++)
+            {
+                if(phoneBeanList.get(index).getNumber().equals(latest))
+                {
+                    if (index==phoneBeanList.size()-1)
+                    {
+                        // 最后一个使用的编码是列表的最后一个编码，已经干完了，不能继续干了
+                        canContinue = false;
+                        //mIndex=0;
+                    }
+                    else
+                    {
+                        mIndex=index+1;
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (canContinue)
+        {
+            /*提示可以继续干*/
+            EventBus.getDefault().post(phoneBeanList);
+        }
+        else
+        {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    /*提示编码已经使用完毕，不能继续干了*/
+                    allCallsAreDone();
+                }
+            });
+        }
     }
 
     private void allCallsAreDone()
@@ -187,7 +191,8 @@ public class MainActivity extends AppCompatActivity
 
     private void dial(String number)
     {
-        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number.replace(" ","")));
+        String exactNumber = number.replace(" ", "");
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + exactNumber));
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
         {
             Toast.makeText(MainActivity.this, "没有授予拨打电话权限", Toast.LENGTH_SHORT).show();
@@ -195,7 +200,7 @@ public class MainActivity extends AppCompatActivity
         }
         startActivity(intent);
         /*记录本次操作的编码*/
-        PreferenceUtil.putString(getApplicationContext(), LATEST,number.replace(" ",""));
+        PreferenceUtil.putString(getApplicationContext(), LATEST, exactNumber);
     }
 
     /**
