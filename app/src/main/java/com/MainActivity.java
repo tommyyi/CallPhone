@@ -5,11 +5,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.View;
@@ -22,6 +22,7 @@ import com.monitor.CallLogHandler;
 import com.net.NetHelper;
 import com.net.PhoneBean;
 import com.net.TargetBean;
+import com.tool.LocalHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,8 +37,8 @@ public class MainActivity extends AppCompatActivity
     private static final String LATEST = "latest";
     private EditText etPhone;
     private PhoneCallStateListener mPhoneCallStateListener;
-    private int mIndex=0;
-    private List<PhoneBean> mPhoneBeanList=new ArrayList<>();
+    private int mIndex = 0;
+    private List<PhoneBean> mPhoneBeanList = new ArrayList<>();
     private CallLogHandler mCallLogHandler;
     private Button mButton;
 
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity
         mPhoneCallStateListener = new PhoneCallStateListener();
         tm.listen(mPhoneCallStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 
-        mButton = (Button)findViewById(R.id.btn_call_phone);
+        mButton = (Button) findViewById(R.id.btn_call_phone);
         mButton.setEnabled(false);
         etPhone = (EditText) findViewById(R.id.et_phone_num);
         EventBus.getDefault().register(this);
@@ -69,28 +70,74 @@ public class MainActivity extends AppCompatActivity
 
                 /*获取company的配置文件*/
                 urlList = NetHelper.getUrlList(getApplicationContext(), Index.TARGET_JSON);
-                if(urlList ==null|| urlList.size()==0)
+                if (urlList == null || urlList.size() == 0)
                 {
-                    loadPhoneBeanListFail();
-                    return;
+                    handleLocalPhoneBeanList();
                 }
-
-                /*从company的配置文件中，获取company的某个用户对应的url*/
-                String url = urlList.get(Index.index).getUrl();
-                /*通过该url，获取该用户需要的编码列表*/
-                phoneBeanList = NetHelper.refresh(getApplicationContext(), url);
-
-                /*没有获取到编码列表：提示该情况，返回*/
-                if(phoneBeanList==null||phoneBeanList.size()==0)
+                else
                 {
-                    loadPhoneBeanListFail();
-                    return;
-                }
+                    /*从company的配置文件中，获取company的某个用户对应的url*/
+                    String url = urlList.get(Index.index).getUrl();
+                    /*通过该url，获取该用户需要的编码列表*/
+                    phoneBeanList = NetHelper.getRemotePhoneBeanList(getApplicationContext(), url);
 
-                handlePhoneBeanList(phoneBeanList);
+                    /*没有获取到编码列表：提示该情况，返回*/
+                    if (phoneBeanList == null || phoneBeanList.size() == 0)
+                    {
+                        handleLocalPhoneBeanList();
+                    }
+                    else
+                    {
+                        phoneBeanList = getUnrepeatedList(phoneBeanList);
+                        loadPhoneBeanListSuccess(phoneBeanList);
+                    }
+                }
             }
         };
         new Thread(runnable).start();
+    }
+
+    private List<PhoneBean> getUnrepeatedList(List<PhoneBean> originalList)
+    {
+        if(originalList == null || originalList.size() == 0)
+            return new ArrayList<>();
+
+        List<PhoneBean> currentList = new ArrayList<>();
+        int size = originalList.size();
+        for(int index = 0; index < size; index++)
+        {
+            if(!isExist(originalList.get(index), currentList))
+                currentList.add(originalList.get(index));
+        }
+        return currentList;
+    }
+
+    private boolean isExist(PhoneBean phoneBean, List<PhoneBean> currentList)
+    {
+        if(currentList == null || currentList.size() ==0)
+            return false;
+
+        int size = currentList.size();
+        for (int index=0;index<size;index++)
+        {
+            if(phoneBean.getNumber().equals(currentList.get(index).getNumber()))
+                return true;
+        }
+        return false;
+    }
+
+    private void handleLocalPhoneBeanList()
+    {
+        List<PhoneBean> phoneBeanList = LocalHelper.getLocalPhoneBeanList(getApplicationContext());
+        if (phoneBeanList == null || phoneBeanList.size() == 0)
+        {
+            loadPhoneBeanListFail();
+        }
+        else
+        {
+            phoneBeanList = getUnrepeatedList(phoneBeanList);
+            loadPhoneBeanListSuccess(phoneBeanList);
+        }
     }
 
     private void loadPhoneBeanListFail()
@@ -106,17 +153,17 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void handlePhoneBeanList(List<PhoneBean> phoneBeanList)
+    private void loadPhoneBeanListSuccess(List<PhoneBean> phoneBeanList)
     {
         boolean canContinue = true;
-        if(phoneBeanList.size() != 0)
+        if (phoneBeanList !=null && phoneBeanList.size() != 0)
         {
             String latest = PreferenceUtil.getString(getApplicationContext(), LATEST);
-            for(int index=0;index<phoneBeanList.size();index++)
+            for (int index = 0; index < phoneBeanList.size(); index++)
             {
-                if(phoneBeanList.get(index).getNumber().equals(latest))
+                if (phoneBeanList.get(index).getNumber().equals(latest))
                 {
-                    if (index==phoneBeanList.size()-1)
+                    if (index == phoneBeanList.size() - 1)
                     {
                         // 最后一个使用的编码是列表的最后一个编码，已经干完了，不能继续干了
                         canContinue = false;
@@ -124,11 +171,25 @@ public class MainActivity extends AppCompatActivity
                     }
                     else
                     {
-                        mIndex=index+1;
+                        mIndex = index + 1;
                     }
                     break;
                 }
             }
+        }
+        else
+        {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    /*提示编码已经使用完毕，不能继续干了*/
+                    allCallsAreDone();
+                }
+            });
+            return;
         }
 
         if (canContinue)
@@ -160,7 +221,7 @@ public class MainActivity extends AppCompatActivity
     public void onCall(View view)
     {
         String nextNum = getNumber();
-        if(nextNum!=null)
+        if (nextNum != null)
             dial(nextNum);
     }
 
@@ -169,13 +230,13 @@ public class MainActivity extends AppCompatActivity
      */
     private String getNumber()
     {
-        if(mPhoneBeanList.size()==0)
+        if (mPhoneBeanList.size() == 0)
         {
             Toast.makeText(MainActivity.this, "加载中", Toast.LENGTH_SHORT).show();
             return null;
         }
 
-        if(mIndex>=mPhoneBeanList.size())
+        if (mIndex >= mPhoneBeanList.size())
         {
             /*编码已经使用完*/
             allCallsAreDone();
@@ -219,7 +280,7 @@ public class MainActivity extends AppCompatActivity
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoad(List<PhoneBean> phoneBeanList)
     {
-        if (phoneBeanList!=null&&phoneBeanList.size()!=0)
+        if (phoneBeanList != null && phoneBeanList.size() != 0)
         {
             mPhoneBeanList = phoneBeanList;
             mButton.setText("点击拨打");
@@ -240,9 +301,9 @@ public class MainActivity extends AppCompatActivity
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeleted(EventLogDeleted eventLogDeleted)
     {
-        TextView view = (TextView)findViewById(R.id.tv_log);
+        TextView view = (TextView) findViewById(R.id.tv_log);
         CharSequence text = view.getText();
-        view.setText(text+"\r\n"+ eventLogDeleted.getMsgBody());
+        view.setText(text + "\r\n" + eventLogDeleted.getMsgBody());
     }
 
     @Override

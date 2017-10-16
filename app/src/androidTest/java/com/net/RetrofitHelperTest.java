@@ -25,7 +25,7 @@ public class RetrofitHelperTest extends TestBase
     @Test
     public void pullList() throws Exception
     {
-        List<PhoneBean> phoneBeanList = NetHelper.refresh(mContext, "https://raw.githubusercontent.com/tommyyi/CallPhone/master/phoneDir/phoneList.json");
+        List<PhoneBean> phoneBeanList = NetHelper.getRemotePhoneBeanList(mContext, "https://raw.githubusercontent.com/tommyyi/CallPhone/master/phoneDir/phoneList.json");
         waiting();
     }
 

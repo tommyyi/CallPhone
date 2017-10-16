@@ -2,6 +2,11 @@ package com.net;
 
 import android.content.Context;
 
+import com.Index;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -14,7 +19,7 @@ import retrofit2.Response;
 
 public class NetHelper
 {
-    public static List<PhoneBean> refresh(Context context, final String url)
+    public static List<PhoneBean> getRemotePhoneBeanList(Context context, final String url)
     {
         try
         {
@@ -69,4 +74,5 @@ public class NetHelper
         }
         return null;
     }
+
 }
