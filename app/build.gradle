@@ -115,6 +115,18 @@ android {
             manifestPlaceholders = [appname        : "小乐乐24"]
             applicationId "com.xiaolele24"
         }
+        deng0{
+            manifestPlaceholders = [appname        : "小乐乐0"]
+            applicationId "com.xiaolele0"
+        }
+        deng1{
+            manifestPlaceholders = [appname        : "小乐乐1"]
+            applicationId "com.xiaolele1"
+        }
+        deng2{
+            manifestPlaceholders = [appname        : "小乐乐2"]
+            applicationId "com.xiaolele2"
+        }
     }
 
     buildTypes {
