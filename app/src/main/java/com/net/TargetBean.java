@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by 易剑锋 on 2017/7/9.
  * 1个TargetBean存储1个url，这个url存储1个用户需要的编码列表
  */
 

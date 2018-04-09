@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by 易剑锋 on 2017/7/1.
  */
 
 public class PhoneBean

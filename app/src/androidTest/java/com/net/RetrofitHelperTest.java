@@ -11,7 +11,6 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 /**
- * Created by 易剑锋 on 2017/7/1.
  */
 @RunWith(AndroidJUnit4.class)
 public class RetrofitHelperTest extends TestBase

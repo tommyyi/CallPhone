@@ -2,11 +2,6 @@ package com.net;
 
 import android.content.Context;
 
-import com.Index;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -14,7 +9,6 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 /**
- * Created by 易剑锋 on 2017/7/1.
  */
 
 public class NetHelper

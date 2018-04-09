@@ -1,12 +1,7 @@
 package com.monitor;
 
 /**
- * Created by 易剑锋 on 2017/7/3.
  */
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -16,6 +11,10 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.CallLog;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class CallLogObserver extends ContentObserver
 {

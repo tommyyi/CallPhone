@@ -1,7 +1,6 @@
 package com;
 
 /**
- * Created by 易剑锋 on 2017/7/4.
  */
 
 public class EventLogDeleted

@@ -2,11 +2,6 @@ package com.net;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
-
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
@@ -14,20 +9,14 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 /**
  * retrofit帮助类
  * 【1】使用自定义的okhttp客户端，此okhttp客户端可以自定义cache之类的特性
  * 【2】添加stetho的网络拦截器
- * Created by 易剑锋 on 2017/3/9.
  */
 
 public class RetrofitHelper

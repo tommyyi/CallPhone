@@ -12,7 +12,6 @@ import com.EventLogDeleted;
 import org.greenrobot.eventbus.EventBus;
 
 /**
- * Created by 易剑锋 on 2017/7/3.
  */
 
 public class CallLogHandler
